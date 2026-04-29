@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import DashboardOverlay from "@/components/DashboardOverlay";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -22,6 +23,7 @@ export default function ScrollCanvas() {
   
   // Element Refs for Text Animation
   const beatARef = useRef<HTMLDivElement>(null);
+  const beatBRef = useRef<HTMLDivElement>(null);
   const beatDRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
 
@@ -131,6 +133,9 @@ export default function ScrollCanvas() {
     tl.fromTo(beatARef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.05, ease: "power1.out" }, 0);
     tl.to(beatARef.current, { opacity: 0, y: -20, duration: 0.05, ease: "power1.inOut" }, 0.15);
 
+    // Beat B (Dashboard on Left Side, visible initially, fades out on scroll)
+    tl.to(beatBRef.current, { opacity: 0, x: -20, duration: 0.05, ease: "power1.inOut" }, 0);
+
     // Beat D Button (75-95%)
     tl.fromTo(beatDRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.05, ease: "power1.out" }, 0.75);
     tl.to(beatDRef.current, { opacity: 0, y: -20, duration: 0.05, ease: "power1.inOut" }, 0.90);
@@ -182,6 +187,14 @@ export default function ScrollCanvas() {
                 Empowering innovation through AI, IoT, and intelligent solutions — that’s EntraIoT.
               </p>
             </div>
+          </div>
+
+          {/* Beat B (Dashboard on left side) */}
+          <div 
+            ref={beatBRef}
+            className="absolute left-[5vw] top-1/2 -translate-y-1/2 opacity-100 pointer-events-auto z-[60]"
+          >
+            <DashboardOverlay />
           </div>
 
           {/* Beat D (Button only) */}

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import ScrollCanvas from "@/components/ScrollCanvas";
-import DashboardOverlay from "@/components/DashboardOverlay";
 
 export default function Home() {
   const [portfolioFinished, setPortfolioFinished] = useState(false);
@@ -41,10 +40,6 @@ export default function Home() {
           className="w-full h-full border-none"
           title="Portfolio Experience"
         />
-      </div>
-
-      <div className="fixed top-[10vh] left-1/2 -translate-x-1/2 z-[60] pointer-events-none w-full max-w-4xl">
-        <DashboardOverlay />
       </div>
 
       {/* The Bike Scrollytelling Experience */}
