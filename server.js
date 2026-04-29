@@ -104,11 +104,29 @@ if (IS_PROD && fs.existsSync(NEXT_STANDALONE)) {
   // Spawn Next.js standalone server as a child process
   const { spawn } = require('child_process');
   
+  function findServerJs(dir) {
+    if (!fs.existsSync(dir)) return null;
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+      const fullPath = path.join(dir, item);
+      if (fs.statSync(fullPath).isDirectory()) {
+        if (item === 'node_modules' || item === '.next') continue;
+        const found = findServerJs(fullPath);
+        if (found) return found;
+      } else if (item === 'server.js') {
+        return fullPath;
+      }
+    }
+    return null;
+  }
+
   let nextServerPath = path.join(NEXT_STANDALONE, 'server.js');
   if (!fs.existsSync(nextServerPath)) {
-    const nested = path.join(NEXT_STANDALONE, 'entraiot-unified', 'stage2', 'server.js');
-    if (fs.existsSync(nested)) {
-      nextServerPath = nested;
+    const found = findServerJs(NEXT_STANDALONE);
+    if (found) {
+      nextServerPath = found;
+    } else {
+      console.error('[Stage 2] Could not find Next.js server.js in standalone directory!');
     }
   }
 
