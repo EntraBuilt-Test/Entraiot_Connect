@@ -6,8 +6,8 @@
   "scripts": {
     "install:all": "npm install && cd stage2 && npm install && cd ../stage3 && npm install",
     "build:stage2": "cd stage2 && npm run build",
-    "build:stage3": "cd stage3 && npx vite build",
-    "build:all": "npm run build:stage2 && npm run build:stage3",
+    "build:stage3": "echo 'Stage 3 is pre-built, skipping.'",
+    "build:all": "npm run build:stage2",
     "start": "cross-env NODE_ENV=production node server.js",
     "dev": "concurrently --names SERVER,NEXT,VITE --prefix-colors cyan,green,magenta \"node server.js\" \"cd stage2 && npm run dev -- --port 3001\" \"cd stage3 && npx vite --port 3002\""
   },
