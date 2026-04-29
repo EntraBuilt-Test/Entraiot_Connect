@@ -4,7 +4,9 @@
   "description": "Entraiot Connect — all 3 stages on one server",
   "main": "server.js",
   "scripts": {
-    "install:all": "npm install && cd stage2 && npm install && cd ../stage3 && npm install",
+    "postinstall": "cd stage2 && npm install && cd ../stage3 && npm install",
+    "build": "npm run build:all",
+    "install:all": "npm install && npm run postinstall",
     "build:stage2": "cd stage2 && npm run build",
     "build:stage3": "echo 'Stage 3 is pre-built, skipping.'",
     "build:all": "npm run build:stage2",
