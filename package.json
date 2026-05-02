@@ -8,7 +8,6 @@
   },
   "scripts": {
     "build": "npm install && cd stage2 && npm install && npm run build",
-
     "install:all": "npm install && npm run postinstall",
     "build:stage2": "cd stage2 && npm run build",
     "build:stage3": "echo 'Stage 3 is pre-built, skipping.'",
@@ -17,9 +16,11 @@
     "dev": "concurrently --names SERVER,NEXT,VITE --prefix-colors cyan,green,magenta \"node server.js\" \"cd stage2 && npm run dev -- --port 3001\" \"cd stage3 && npx vite --port 3002\""
   },
   "dependencies": {
+    "acorn": "^8.16.0",
     "concurrently": "^8.2.2",
     "cross-env": "^10.1.0",
     "express": "^4.18.2",
-    "http-proxy-middleware": "^3.0.2"
+    "http-proxy-middleware": "^3.0.2",
+    "puppeteer": "^24.42.0"
   }
 }

@@ -50,7 +50,8 @@ function staticOpts(noCache = false) {
       if (noCache || filePath.endsWith('.html')) {
         res.setHeader('Cache-Control', 'no-cache');
       } else {
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        // res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('Cache-Control', 'no-cache');
       }
     }
   };
@@ -85,12 +86,12 @@ app.get('/', (_req, res) => res.redirect('/way'));
 // ══════════════════════════════════════════════════════════════════════════
 const STAGE1_DIR = path.join(__dirname, 'stage1');
 
-app.use('/portfolio', express.static(STAGE1_DIR, staticOpts()));
+app.use('/portfolio', express.static(STAGE1_DIR, staticOpts(true)));
 app.get('/portfolio', spaFallback(STAGE1_DIR));
 app.get('/portfolio/*', spaFallback(STAGE1_DIR));
 
 // Fallback for Stage 1 dynamic imports that request /assets/* instead of /portfolio/assets/*
-app.use('/assets', express.static(path.join(STAGE1_DIR, 'assets'), staticOpts()));
+app.use('/assets', express.static(path.join(STAGE1_DIR, 'assets'), staticOpts(true)));
 
 // ══════════════════════════════════════════════════════════════════════════
 // STAGE 2 — Next.js standalone bike scrollytelling  →  /way
@@ -210,7 +211,7 @@ const STAGE3_DIST = path.join(__dirname, 'stage3', 'dist');
 const VITE_PORT   = 3002;
 
 if (IS_PROD && fs.existsSync(STAGE3_DIST)) {
-  app.use('/buildings', express.static(STAGE3_DIST, staticOpts()));
+  app.use('/buildings', express.static(STAGE3_DIST, staticOpts(true)));
   app.get('/buildings', spaFallback(STAGE3_DIST));
   app.get('/buildings/*', spaFallback(STAGE3_DIST));
 } else {
@@ -237,9 +238,9 @@ if (IS_PROD && fs.existsSync(STAGE3_DIST)) {
 // If any file (like /temp.gltf) is requested at the root and missed by routes above,
 // try to serve it from STAGE3_DIST or STAGE1_DIR before returning 404.
 if (IS_PROD && fs.existsSync(STAGE3_DIST)) {
-  app.use(express.static(STAGE3_DIST, staticOpts()));
+  app.use(express.static(STAGE3_DIST, staticOpts(true)));
 }
-app.use(express.static(STAGE1_DIR, staticOpts()));
+app.use(express.static(STAGE1_DIR, staticOpts(true)));
 
 // ─── 404 ──────────────────────────────────────────────────────────────────
 app.use((req, res) => {

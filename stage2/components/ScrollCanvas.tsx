@@ -10,7 +10,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
-const FRAME_COUNT = 120;
+const FRAME_COUNT = 180;
 
 export default function ScrollCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,10 @@ export default function ScrollCanvas() {
   // Element Refs for Text Animation
   const beatARef = useRef<HTMLDivElement>(null);
   const beatBRef = useRef<HTMLDivElement>(null);
-  const beatDRef = useRef<HTMLDivElement>(null);
+  const sign1Ref = useRef<HTMLDivElement>(null);
+  const sign2Ref = useRef<HTMLDivElement>(null);
+  const sign3Ref = useRef<HTMLDivElement>(null);
+  const sign4Ref = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
 
   const loadImages = useCallback(async () => {
@@ -114,6 +117,11 @@ export default function ScrollCanvas() {
         start: "top top",
         end: "bottom bottom",
         scrub: 1, // Smooth dampening matching our previous 100 stiffness
+        onUpdate: (self) => {
+          if (self.progress > 0.995 && !window.location.href.includes('/buildings')) {
+            window.location.href = '/buildings';
+          }
+        }
       }
     });
 
@@ -136,9 +144,22 @@ export default function ScrollCanvas() {
     // Beat B (Dashboard on Left Side, visible initially, fades out on scroll)
     tl.to(beatBRef.current, { opacity: 0, x: -20, duration: 0.05, ease: "power1.inOut" }, 0);
 
-    // Beat D Button (75-95%)
-    tl.fromTo(beatDRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.05, ease: "power1.out" }, 0.75);
-    tl.to(beatDRef.current, { opacity: 0, y: -20, duration: 0.05, ease: "power1.inOut" }, 0.90);
+    // Sign 1 (Management - Left) 22-31%
+    tl.fromTo(sign1Ref.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.02, ease: "power2.out" }, 0.22);
+    tl.to(sign1Ref.current, { opacity: 0, x: -50, duration: 0.02, ease: "power2.in" }, 0.31);
+
+    // Sign 2 (Marketing - Right) 33-42%
+    tl.fromTo(sign2Ref.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 0.02, ease: "power2.out" }, 0.33);
+    tl.to(sign2Ref.current, { opacity: 0, x: 50, duration: 0.02, ease: "power2.in" }, 0.42);
+
+    // Sign 3 (Technical - Left) 44-53%
+    tl.fromTo(sign3Ref.current, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.02, ease: "power2.out" }, 0.44);
+    tl.to(sign3Ref.current, { opacity: 0, x: -50, duration: 0.02, ease: "power2.in" }, 0.53);
+
+    // Sign 4 (Financial - Right) 55-64%
+    tl.fromTo(sign4Ref.current, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 0.02, ease: "power2.out" }, 0.55);
+    tl.to(sign4Ref.current, { opacity: 0, x: 50, duration: 0.02, ease: "power2.in" }, 0.64);
+
 
   }, { dependencies: [imagesLoading, drawFrame], scope: containerRef });
 
@@ -197,20 +218,63 @@ export default function ScrollCanvas() {
             <DashboardOverlay />
           </div>
 
-          {/* Beat D (Button only) */}
-          <div 
-            ref={beatDRef}
-            className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 opacity-0"
-          >
-            <div className="max-w-3xl flex flex-col items-center">
-              <button 
-                onClick={() => window.location.href = '/buildings'}
-                className="pointer-events-auto bg-white text-[#050505] px-8 py-4 rounded-full text-sm font-semibold tracking-widest uppercase hover:bg-white/90 hover:scale-105 active:scale-95 transition-all duration-300"
-              >
-                Continue to 3D Buildings
-              </button>
+          {/* Sign 1: Management (Left) */}
+          <div ref={sign1Ref} className="absolute inset-0 flex items-center justify-start w-full px-8 md:px-24 opacity-0 pointer-events-none">
+            <div className="max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] relative overflow-hidden transition-transform duration-500 hover:scale-105 pointer-events-auto">
+              <div className="absolute -inset-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-3xl opacity-50" />
+              <div className="relative z-10">
+                <div className="text-4xl mb-4 drop-shadow-md">🏢</div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Management Field</h3>
+                <p className="text-white/70 text-sm md:text-base leading-relaxed font-light">
+                  Strategizing for the future, optimizing processes, and leading the way towards comprehensive digital transformation.
+                </p>
+              </div>
             </div>
           </div>
+
+          {/* Sign 2: Marketing (Right) */}
+          <div ref={sign2Ref} className="absolute inset-0 flex items-center justify-end w-full px-8 md:px-24 opacity-0 pointer-events-none">
+            <div className="max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] relative overflow-hidden text-right flex flex-col items-end transition-transform duration-500 hover:scale-105 pointer-events-auto">
+              <div className="absolute -inset-20 bg-gradient-to-bl from-orange-500/20 to-pink-500/20 blur-3xl opacity-50" />
+              <div className="relative z-10 w-full">
+                <div className="text-4xl mb-4 drop-shadow-md">📢</div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Marketing Field</h3>
+                <p className="text-white/70 text-sm md:text-base leading-relaxed font-light">
+                  Crafting compelling narratives, engaging audiences, and driving growth through data-backed market intelligence.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sign 3: Technical (Left) */}
+          <div ref={sign3Ref} className="absolute inset-0 flex items-center justify-start w-full px-8 md:px-24 opacity-0 pointer-events-none">
+            <div className="max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] relative overflow-hidden transition-transform duration-500 hover:scale-105 pointer-events-auto">
+              <div className="absolute -inset-20 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 blur-3xl opacity-50" />
+              <div className="relative z-10">
+                <div className="text-4xl mb-4 drop-shadow-md">💻</div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Technical Field</h3>
+                <p className="text-white/70 text-sm md:text-base leading-relaxed font-light">
+                  Building robust architectures, engineering innovative solutions, and pushing the boundaries of modern technology.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sign 4: Financial (Right) */}
+          <div ref={sign4Ref} className="absolute inset-0 flex items-center justify-end w-full px-8 md:px-24 opacity-0 pointer-events-none">
+            <div className="max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] relative overflow-hidden text-right flex flex-col items-end transition-transform duration-500 hover:scale-105 pointer-events-auto">
+              <div className="absolute -inset-20 bg-gradient-to-bl from-amber-500/20 to-red-500/20 blur-3xl opacity-50" />
+              <div className="relative z-10 w-full">
+                <div className="text-4xl mb-4 drop-shadow-md">💰</div>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Financial Field</h3>
+                <p className="text-white/70 text-sm md:text-base leading-relaxed font-light">
+                  Ensuring sustainable growth, managing resources efficiently, and securing long-term economic stability.
+                </p>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
     </div>
