@@ -49,9 +49,8 @@ function staticOpts(noCache = false) {
     setHeaders(res, filePath) {
       if (noCache || filePath.endsWith('.html')) {
         res.setHeader('Cache-Control', 'no-cache');
-      } else {
-        // res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
       }
     }
   };
@@ -85,6 +84,14 @@ app.get('/', (_req, res) => res.redirect('/way'));
 // STAGE 1 — pre-built static portfolio  →  /portfolio
 // ══════════════════════════════════════════════════════════════════════════
 const STAGE1_DIR = path.join(__dirname, 'stage1');
+const STAGE2_DIR = path.join(__dirname, 'stage2');
+
+console.log('----------------------------------------------------');
+console.log('SERVER STARTING...');
+console.log('CWD:', process.cwd());
+console.log('__dirname:', __dirname);
+console.log('STAGE1_DIR:', STAGE1_DIR);
+console.log('----------------------------------------------------');
 
 app.use('/portfolio', express.static(STAGE1_DIR, staticOpts(true)));
 app.get('/portfolio', spaFallback(STAGE1_DIR));
