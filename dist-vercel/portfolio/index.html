@@ -352,6 +352,92 @@
     </style>
     <script type="module" crossorigin src="/portfolio/assets/index-Do2HjHOR.js"></script>
     <link rel="stylesheet" crossorigin href="/portfolio/assets/index-CaPdr700.css">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+      /* --- Custom Drifting Car Animation Overlay --- */
+      #drift-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 99999999;
+        pointer-events: none;
+        display: none;
+        overflow: hidden;
+      }
+      #drift-overlay.active {
+        display: block;
+      }
+      #drift-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      #drift-text-container {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-family: 'Zen Dots', sans-serif;
+        pointer-events: none;
+        z-index: 10;
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .lets-text {
+        font-family: 'Caveat', cursive;
+        font-size: 6vw;
+        color: #ffeb3b;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        transform: rotate(-12deg) translate(-40px, 0px);
+        margin-bottom: -1vw;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .go-text {
+        font-size: 14vw;
+        font-weight: 900;
+        letter-spacing: -2px;
+        text-transform: uppercase;
+        font-style: italic;
+        line-height: 0.9;
+        color: #ffffff;
+        text-shadow: 
+          -2px -2px 0 #000,  
+           2px -2px 0 #000,
+          -2px  2px 0 #000,
+           2px  2px 0 #000,
+           4px  4px 0px rgba(0,0,0,0.8),
+           8px  8px 25px rgba(0,0,0,0.5);
+      }
+      #drift-car-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 28vw;
+        min-width: 320px;
+        max-width: 500px;
+        transform-origin: center center;
+        pointer-events: none;
+        z-index: 20;
+      }
+      #drift-car {
+        width: 100%;
+        height: auto;
+        display: block;
+        transform: scaleX(-1);
+        filter: drop-shadow(0px 15px 12px rgba(0,0,0,0.6));
+      }
+    </style>
   </head>
   <body>
     <div id="preloader" class="preloader--france" data-progress="0">
@@ -524,5 +610,324 @@
         });
       });
     </script>
-</body>
+
+    <!-- Drifting Car Animation Overlay -->
+    <div id="drift-overlay">
+      <canvas id="drift-canvas"></canvas>
+      <div id="drift-text-container">
+        <div class="lets-text">Let's</div>
+        <div class="go-text">GO!</div>
+      </div>
+      <div id="drift-car-container">
+        <img id="drift-car" src="" alt="Car" />
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        let animationPlayed = false;
+        let canvas, ctx;
+        let particles = [];
+        let tireTracks = [];
+        let isAnimating = false;
+        let animationFrameId = null;
+
+        // Sports car assets from workspace
+        const cars = [
+          { color: 'orange', src: '/portfolio/image/car_orange.png', textGradient: 'linear-gradient(to bottom, #ffffff 10%, #ff6600 100%)' },
+          { color: 'red', src: '/portfolio/image/car_red.png', textGradient: 'linear-gradient(to bottom, #ffffff 10%, #ff1111 100%)' },
+          { color: 'green', src: '/portfolio/image/car_green.png', textGradient: 'linear-gradient(to bottom, #ffffff 10%, #22ff33 100%)' },
+          { color: 'purple', src: '/portfolio/image/car_purple.png', textGradient: 'linear-gradient(to bottom, #ffffff 10%, #bb00ff 100%)' },
+          { color: 'teal', src: '/portfolio/image/car_teal.png', textGradient: 'linear-gradient(to bottom, #ffffff 10%, #00e5ff 100%)' }
+        ];
+
+        class Particle {
+          constructor(x, y, vx, vy, size, maxLife) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.size = size;
+            this.life = 0;
+            this.maxLife = maxLife;
+            this.growth = 0.6 + Math.random() * 0.8;
+            this.alpha = 0.6 + Math.random() * 0.4;
+            const shade = 190 + Math.random() * 50;
+            this.color = "rgba(" + shade + "," + shade + "," + shade;
+          }
+
+          update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.vx *= 0.97;
+            this.vy *= 0.97;
+            this.vy -= 0.08; // float upwards
+            this.size += this.growth;
+            this.life++;
+            this.alpha = (1 - (this.life / this.maxLife)) * 0.75;
+          }
+
+          draw(ctx) {
+            ctx.beginPath();
+            let grad = ctx.createRadialGradient(this.x, this.y, this.size * 0.05, this.x, this.y, this.size);
+            grad.addColorStop(0, `${this.color}, ${this.alpha})`);
+            grad.addColorStop(0.35, `${this.color}, ${this.alpha * 0.5})`);
+            grad.addColorStop(1, `${this.color}, 0)`);
+            ctx.fillStyle = grad;
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        function resizeCanvas() {
+          if (canvas) {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+          }
+        }
+
+        function initOverlay() {
+          canvas = document.getElementById('drift-canvas');
+          ctx = canvas.getContext('2d');
+          resizeCanvas();
+          window.addEventListener('resize', resizeCanvas);
+        }
+
+        function loop() {
+          if (!isAnimating) return;
+          
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw tire tracks
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+          ctx.lineWidth = 14;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          
+          for (let i = 0; i < tireTracks.length; i++) {
+            const segment = tireTracks[i];
+            if (segment.length < 2) continue;
+            ctx.beginPath();
+            ctx.moveTo(segment[0].x, segment[0].y);
+            for (let j = 1; j < segment.length; j++) {
+              ctx.lineTo(segment[j].x, segment[j].y);
+            }
+            ctx.stroke();
+          }
+
+          // Update & draw smoke particles
+          for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.update();
+            if (p.life >= p.maxLife) {
+              particles.splice(i, 1);
+            } else {
+              p.draw(ctx);
+            }
+          }
+
+          animationFrameId = requestAnimationFrame(loop);
+        }
+
+        function spawnSmoke(x, y, count = 2) {
+          for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1.5 + Math.random() * 3.5;
+            const vx = Math.cos(angle) * speed - 2.5; // drift drag backward
+            const vy = Math.sin(angle) * speed - 0.6;
+            const size = 16 + Math.random() * 24;
+            const maxLife = 45 + Math.random() * 25;
+            particles.push(new Particle(x, y, vx, vy, size, maxLife));
+          }
+        }
+
+        function addTireTrackPoint(x, y) {
+          if (tireTracks.length === 0) {
+            tireTracks.push([]);
+          }
+          const currentSegment = tireTracks[tireTracks.length - 1];
+          if (currentSegment.length === 0) {
+            currentSegment.push({ x, y });
+          } else {
+            const lastPoint = currentSegment[currentSegment.length - 1];
+            const dist = Math.hypot(x - lastPoint.x, y - lastPoint.y);
+            if (dist > 4) {
+              currentSegment.push({ x, y });
+            }
+          }
+        }
+
+        function triggerScreenShake(intensity = 6, duration = 0.5) {
+          const root = document.getElementById('root');
+          if (!root) return;
+          if (typeof gsap === 'undefined') return;
+          const tl = gsap.timeline();
+          const steps = 10;
+          const stepDuration = duration / steps;
+          
+          for (let i = 0; i < steps; i++) {
+            const dx = (Math.random() - 0.5) * intensity;
+            const dy = (Math.random() - 0.5) * intensity;
+            tl.to(root, { x: dx, y: dy, duration: stepDuration, ease: 'none' });
+          }
+          tl.to(root, { x: 0, y: 0, duration: stepDuration });
+        }
+
+        function startDriftAnimation() {
+          if (typeof gsap === 'undefined') {
+            console.warn('GSAP is not loaded. Skipping custom animation.');
+            return;
+          }
+          
+          isAnimating = true;
+          particles = [];
+          tireTracks = [[]];
+
+          const overlay = document.getElementById('drift-overlay');
+          const carContainer = document.getElementById('drift-car-container');
+          const carImg = document.getElementById('drift-car');
+          const textContainer = document.getElementById('drift-text-container');
+          const goText = textContainer.querySelector('.go-text');
+
+          // Pick a random sports car
+          const carInfo = cars[Math.floor(Math.random() * cars.length)];
+          carImg.src = carInfo.src;
+          
+          // Set text gradient color match
+          goText.style.background = carInfo.textGradient;
+          goText.style.webkitBackgroundClip = 'text';
+          goText.style.webkitTextFillColor = 'transparent';
+
+          overlay.style.display = 'block';
+          
+          // Start canvas animation frame loop
+          loop();
+
+          const W = window.innerWidth;
+          const H = window.innerHeight;
+
+          const startX = -W * 0.25;
+          const endX = W * 1.25;
+          const baseVal = H * 0.72;
+          const midY = H * 0.67;
+          const exitY = H * 0.52;
+
+          // Set initial animation properties
+          gsap.set(carContainer, { x: startX, y: baseVal, rotation: 8, xPercent: -50, yPercent: -50 });
+          gsap.set(textContainer, { scale: 0.4, opacity: 0 });
+
+          const timeline = gsap.timeline({
+            onComplete: () => {
+              gsap.to(overlay, {
+                opacity: 0,
+                duration: 0.8,
+                onComplete: () => {
+                  overlay.style.display = 'none';
+                  overlay.style.opacity = 1;
+                  isAnimating = false;
+                  cancelAnimationFrame(animationFrameId);
+                  ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+              });
+            }
+          });
+
+          // Wheel coordinate calculator based on flipped scaleX(-1) layout
+          const trackAndSmokeUpdate = () => {
+            const cx = gsap.getProperty(carContainer, 'x');
+            const cy = gsap.getProperty(carContainer, 'y');
+            const rotation = gsap.getProperty(carContainer, 'rotation') || 0;
+            const theta = rotation * Math.PI / 180;
+
+            const carW = carContainer.clientWidth || 380;
+            const carH = carContainer.clientHeight || 140;
+            const wheelDx = -carW * 0.28;
+            const wheelDy = carH * 0.32;
+
+            const wheelX = cx + wheelDx * Math.cos(theta) - wheelDy * Math.sin(theta);
+            const wheelY = cy + wheelDx * Math.sin(theta) + wheelDy * Math.cos(theta);
+
+            if (rotation < 0) {
+              addTireTrackPoint(wheelX, wheelY);
+              const intensity = Math.min(Math.abs(rotation) / 4, 5);
+              spawnSmoke(wheelX, wheelY, intensity);
+            }
+          };
+
+          // Phase 1: Enter screen
+          timeline.to(carContainer, {
+            x: W * 0.26,
+            y: baseVal,
+            rotation: 4,
+            duration: 0.8,
+            ease: 'power2.in',
+            onUpdate: trackAndSmokeUpdate
+          });
+
+          // Phase 2: Volumetric drift slide
+          timeline.to(carContainer, {
+            x: W * 0.65,
+            y: midY,
+            rotation: -26, // Sideways drift angle
+            duration: 1.1,
+            ease: 'power1.out',
+            onStart: () => {
+              tireTracks.push([]);
+              gsap.to(textContainer, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.8)' });
+              triggerScreenShake(7, 0.4);
+            },
+            onUpdate: trackAndSmokeUpdate
+          });
+
+          // Phase 3: Recovery exit
+          timeline.to(carContainer, {
+            x: endX,
+            y: exitY,
+            rotation: 6,
+            duration: 1.2,
+            ease: 'power2.in',
+            onStart: () => {
+              tireTracks.push([]);
+            },
+            onUpdate: trackAndSmokeUpdate
+          });
+
+          // Phase 4: Text out
+          timeline.to(textContainer, {
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.6,
+            delay: 0.4
+          }, "-=0.6");
+        }
+
+        // Poll visibility of stage 1 cards
+        document.addEventListener('DOMContentLoaded', () => {
+          initOverlay();
+
+          setInterval(() => {
+            const items = document.querySelectorAll('.portfolio-item');
+            if (items.length > 0) {
+              let isVisible = false;
+              items.forEach(item => {
+                if (!item.classList.contains('portfolio-item--disabled')) {
+                  isVisible = true;
+                }
+              });
+
+              if (isVisible) {
+                if (!animationPlayed) {
+                  animationPlayed = true;
+                  // Fullscreen sports car drift is disabled to keep visual focus entirely inside the cards
+                }
+              } else {
+                animationPlayed = false;
+              }
+            }
+          }, 200);
+        });
+      })();
+    </script>
+  </body>
 </html>

@@ -36,7 +36,7 @@ export default function Home() {
       >
         <iframe 
           ref={iframeRef}
-          src="/portfolio?v=world-begins-v2" 
+          src="/portfolio/?v=world-begins-v2" 
           className="w-full h-full border-none"
           title="Portfolio Experience"
         />

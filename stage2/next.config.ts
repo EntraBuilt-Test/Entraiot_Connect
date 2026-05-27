@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // basePath: "/way",
-  // output: "export",
+  basePath: "/way",
+  output: "export",
   images: { unoptimized: true },
 };
 
