@@ -94,8 +94,10 @@ const E=()=>{
   customGeometry.setIndex(new BufferAttribute(mergedIndices,1));
   customGeometry.computeVertexNormals();
 
+  l.material.side=2;
+
   return e.jsxs("group",{name:"buildingsLuxembourg",position:a.position.toArray(),children:[
-    e.jsx("mesh",{geometry:customGeometry,material:l.material,position:l.position.toArray(),rotation:l.rotation.toArray()}),
+    e.jsx("mesh",{geometry:customGeometry,material:l.material,position:[l.position.x,l.position.y+1.0,l.position.z],rotation:[0,l.rotation.y-Math.PI/2,0]}),
     x.map((o,h)=>e.jsx("mesh",{geometry:o.geometry,onUpdate:m=>m.matrixAutoUpdate=!1,children:e.jsx("meshBasicMaterial",{map:d,toneMapped:!1})},o.uuid)),
     b.map((o,h)=>e.jsx("mesh",{geometry:o.geometry,onUpdate:m=>m.matrixAutoUpdate=!1,children:e.jsx("meshBasicMaterial",{map:g,toneMapped:!1})},o.uuid)),
     e.jsx("primitive",{object:u,"material-roughness":.2,onUpdate:o=>o.matrixAutoUpdate=!1}),
