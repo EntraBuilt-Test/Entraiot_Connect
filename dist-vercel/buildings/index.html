@@ -7,8 +7,8 @@
   <title>3D Portfolio</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="assets/index-DhakUnc6.js?v=2"></script>
-  <link rel="stylesheet" crossorigin href="assets/index-Bs7OQl-f.css">
+  <script type="module" crossorigin src="/assets/index-av_-CE32.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Bs7OQl-f.css">
 </head>
 <body>
   <div id="app">
@@ -116,8 +116,7 @@
       </div>
 
       <!-- Section 2b: Skills list -->
-      <div class="hud-block" id="hud-skills">
-        <div>IT Services</div>
+      <div class="hud-block" id="hud-skills" style="display: none !important;">
         <div class="highlight">Animation Website</div>
         <div>AI Automation</div>
         <div>IoT Service</div>
@@ -157,6 +156,16 @@
 
     <!-- Progress bar -->
     <div id="progress-bar"></div>
+
+  <!-- Labels Container for 3D Buildings -->
+  <div id="labels-container" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:500;">
+    <div id="label-0" class="building-label" style="position:absolute; color:#ffffff; font-weight:bold; font-size: 1.2vw; font-family: 'DM Sans', sans-serif; white-space:nowrap; transform:translate(-50%,-100%); opacity:0; transition: opacity 0.3s; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">Management Department</div>
+    <div id="label-1" class="building-label" style="position:absolute; color:#ffffff; font-weight:bold; font-size: 1.2vw; font-family: 'DM Sans', sans-serif; white-space:nowrap; transform:translate(-50%,-100%); opacity:0; transition: opacity 0.3s; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">Technical Department</div>
+    <div id="label-2" class="building-label" style="position:absolute; color:#ffffff; font-weight:bold; font-size: 1.2vw; font-family: 'DM Sans', sans-serif; white-space:nowrap; transform:translate(-50%,-100%); opacity:0; transition: opacity 0.3s; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">Technical Department</div>
+    <div id="label-3" class="building-label" style="position:absolute; color:#ffffff; font-weight:bold; font-size: 1.2vw; font-family: 'DM Sans', sans-serif; white-space:nowrap; transform:translate(-50%,-100%); opacity:0; transition: opacity 0.3s; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">Client Handling Department</div>
+    <div id="label-4" class="building-label" style="position:absolute; color:#ffffff; font-weight:bold; font-size: 1.2vw; font-family: 'DM Sans', sans-serif; white-space:nowrap; transform:translate(-50%,-100%); opacity:0; transition: opacity 0.3s; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">Marketing Department</div>
+    <div id="label-5" class="building-label" style="position:absolute; color:#ffffff; font-weight:bold; font-size: 1.2vw; font-family: 'DM Sans', sans-serif; white-space:nowrap; transform:translate(-50%,-100%); opacity:0; transition: opacity 0.3s; text-shadow: 2px 2px 5px rgba(0,0,0,0.8);">Financial Department</div>
+  </div>
 
   </div>
 
