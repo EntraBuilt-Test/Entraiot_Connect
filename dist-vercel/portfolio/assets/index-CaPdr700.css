@@ -9,20 +9,20 @@
   --dept-color-rgb: 192, 57, 43;
 }
 .portfolio-item.dept-2 {
-  --dept-color: #8e44ad;
-  --dept-color-rgb: 142, 68, 173;
-}
-.portfolio-item.dept-3 {
   --dept-color: #27ae60;
   --dept-color-rgb: 39, 174, 96;
 }
+.portfolio-item.dept-3 {
+  --dept-color: #8e44ad;
+  --dept-color-rgb: 142, 68, 173;
+}
 .portfolio-item.dept-4 {
-  --dept-color: #16a085;
-  --dept-color-rgb: 22, 160, 133;
+  --dept-color: #f1c40f;
+  --dept-color-rgb: 241, 196, 15;
 }
 .portfolio-item.dept-5 {
-  --dept-color: #f39c12;
-  --dept-color-rgb: 243, 156, 18;
+  --dept-color: #2980b9;
+  --dept-color-rgb: 41, 128, 185;
 }
 
 .portfolio-item {
@@ -40,12 +40,12 @@
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 12px !important;
   background: #000000 !important;
-  transform: perspective(1000px) translateY(0) scale(1) rotateX(0deg) rotateY(0deg) !important;
+  transform: perspective(1000px) translateY(0) scale(1) !important;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .portfolio-item:hover .portfolio-card-inner {
-  transform: perspective(1000px) translateY(-25px) scale(1.05) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) !important;
+  transform: perspective(1000px) translateY(-25px) scale(1.05) !important;
   transition: transform 0.1s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
   border-color: rgba(var(--dept-color-rgb), 0.6) !important;
   box-shadow: 0 35px 70px rgba(0, 0, 0, 0.75), 0 0 45px rgba(var(--dept-color-rgb), 0.35) !important;
@@ -493,7 +493,7 @@
   background: var(--dept-color) !important;
   border-color: #fee8cd !important;
   box-shadow: 0 0 25px rgba(var(--dept-color-rgb), 0.75) !important;
-  color: #ffffff !important;
+  color: #121214 !important;
   transform: translateX(-50%) scale(1.03) !important;
 }
 
@@ -523,6 +523,14 @@
   opacity: 1 !important;
   transform: translateY(0) !important;
   animation: neonBlink 1.5s infinite alternate !important;
+}
+.portfolio-item .card-action-btn:hover .btn-txt-hover {
+  color: #121214 !important;
+  text-shadow: none !important;
+  animation: none !important;
+}
+.portfolio-item .card-action-btn:hover .btn-txt-default {
+  color: #121214 !important;
 }
 
 @keyframes neonBlink {

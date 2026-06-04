@@ -612,20 +612,7 @@
               item.dataset.tiltBound = 'true';
               
               item.addEventListener('mousemove', (e) => {
-                const rect = item.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const maxRotation = 12; // Maximum tilt degrees
-                const ry = ((x - centerX) / centerX) * maxRotation;
-                const rx = -((y - centerY) / centerY) * maxRotation;
-                
-                const targetElement = inner || item;
-                targetElement.style.setProperty('--rx', rx + 'deg');
-                targetElement.style.setProperty('--ry', ry + 'deg');
+                // Stable cards - no tilt rotation
               });
               
               item.addEventListener('mouseleave', () => {
