@@ -136,7 +136,7 @@ if (fs.existsSync(STAGE2_DIR)) {
 console.log('----------------------------------------------------');
 
 // ─── Global Static Fallback ───────────────────────────────────────────────
-if (IS_PROD && fs.existsSync(STAGE3_DIR)) {
+if (fs.existsSync(STAGE3_DIR)) {
   app.use(express.static(STAGE3_DIR, staticOpts(true)));
 }
 app.use(express.static(STAGE1_DIR, staticOpts(true)));
